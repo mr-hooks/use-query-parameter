@@ -22,6 +22,7 @@ type UseQueryParameter = (
  */
 const useQueryParameter : UseQueryParameter = (name, defaultValue = '', mode = 'suppress') => {
   const [queryParameterValue, setState] = React.useState(defaultValue);
+  const previousParameterValueRef = React.useRef('');
 
   React.useEffect(() => {
     const url = new URL(window.location.href);
@@ -52,13 +53,15 @@ const useQueryParameter : UseQueryParameter = (name, defaultValue = '', mode = '
       // eslint-disable-next-line no-restricted-globals -- this is the intention of the library
       history.replaceState(null, '', url);
     }
+
+    previousParameterValueRef.current = queryParameterValue;
   }, [name, queryParameterValue]);
 
   const setQueryParameter = React.useCallback((nextVal:SetStateAction<string>) => {
     // Handle the setState api
     let normalizedNextVal = '';
     if (typeof nextVal === 'function') {
-      normalizedNextVal = nextVal(queryParameterValue);
+      normalizedNextVal = nextVal(previousParameterValueRef.current);
     } else {
       normalizedNextVal = nextVal;
     }
@@ -75,7 +78,7 @@ const useQueryParameter : UseQueryParameter = (name, defaultValue = '', mode = '
     }
 
     return normalizedNextVal;
-  }, [setState]);
+  }, [previousParameterValueRef, setState]);
 
   return [queryParameterValue, setQueryParameter];
 };
