@@ -55,7 +55,7 @@ const useQueryParameter : UseQueryParameter = (name, defaultValue = '', mode = '
     }
 
     previousParameterValueRef.current = queryParameterValue;
-  }, [name, queryParameterValue]);
+  }, [name, queryParameterValue, previousParameterValueRef]);
 
   const setQueryParameter = React.useCallback((nextVal:SetStateAction<string>) => {
     // Handle the setState api
