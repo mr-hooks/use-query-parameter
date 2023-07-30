@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "airbnb",
+    "airbnb-typescript"
+  ],
+  "ignorePatterns": ["**/node_modules/*", "**/dist/*"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }
+}
