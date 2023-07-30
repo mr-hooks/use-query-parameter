@@ -1,2 +1,3 @@
-import useQueryParameter from "./useQueryParameter";
+import useQueryParameter from './useQueryParameter';
+
 export default useQueryParameter;
