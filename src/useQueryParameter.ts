@@ -1,10 +1,12 @@
 import React, { Dispatch, SetStateAction } from 'react';
 
-type UseQueryParameter = (
+export type UseQueryParameterReturn = [string, Dispatch<SetStateAction<string>>];
+export type Mode = 'simple' | 'required' | 'suppress';
+export type UseQueryParameter = (
   name:string,
   defaultValue?:string,
-  mode?:'simple' | 'required' | 'suppress'
-) => [string, Dispatch<SetStateAction<string>>];
+  mode?:Mode
+) => UseQueryParameterReturn;
 
 /**
  * useQueryParameter acts like useState, but keeps the url in sync.
@@ -31,8 +33,7 @@ const useQueryParameter : UseQueryParameter = (name, defaultValue = '', mode = '
     // in required mode, if the name is not in the url, put it in there
     if (!urlSearch.has(name) && mode === 'required') {
       urlSearch.set(name, defaultValue);
-      // eslint-disable-next-line no-restricted-globals -- this is the intention of the library
-      history.replaceState(null, '', url);
+      window.history.replaceState(null, '', url);
     }
 
     // if the url and the state disagree, take the url value
@@ -42,16 +43,15 @@ const useQueryParameter : UseQueryParameter = (name, defaultValue = '', mode = '
       // Preserve the state in the case that the stored value === the default value
       // the query value is null, and we are in 'suppress' mode
       // I.E. if the page is loading with nothing in the url, the default value stands
-      if (mode !== 'suppress' || queryParameterValue !== defaultValue || val != null) {
+      if (mode === 'required' || queryParameterValue !== defaultValue || val != null) {
         setState(normalizedVal);
       }
     }
 
     // in suppress module if the value is ever default, remove it
-    if (normalizedVal === defaultValue && mode === 'suppress') {
+    if (normalizedVal === defaultValue && mode === 'suppress' && val !== null) {
       urlSearch.delete(name);
-      // eslint-disable-next-line no-restricted-globals -- this is the intention of the library
-      history.replaceState(null, '', url);
+      window.history.replaceState(null, '', url);
     }
 
     previousParameterValueRef.current = queryParameterValue;
@@ -82,8 +82,7 @@ const useQueryParameter : UseQueryParameter = (name, defaultValue = '', mode = '
     // update the url with the updated value
     if (normalizedNextVal !== val) {
       urlSearch.set(name, normalizedNextVal);
-      // eslint-disable-next-line no-restricted-globals -- this is the intention of the library
-      history.replaceState(null, '', url);
+      window.history.replaceState(null, '', url);
       setState(normalizedNextVal);
     }
 
