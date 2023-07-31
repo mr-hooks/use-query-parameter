@@ -22,7 +22,7 @@ type UseQueryParameter = (
  */
 const useQueryParameter : UseQueryParameter = (name, defaultValue = '', mode = 'suppress') => {
   const [queryParameterValue, setState] = React.useState(defaultValue);
-  const previousParameterValueRef = React.useRef('');
+  const previousParameterValueRef = React.useRef(defaultValue);
 
   React.useEffect(() => {
     const url = new URL(window.location.href);
@@ -60,16 +60,26 @@ const useQueryParameter : UseQueryParameter = (name, defaultValue = '', mode = '
   const setQueryParameter = React.useCallback((nextVal:SetStateAction<string>) => {
     // Handle the setState api
     let normalizedNextVal = '';
+
+    // if the passed value is different, set the url, then the state to cause minimal re-renders
+
+    // get the latest state from the URL
+    const url = new URL(window.location.href);
+    const urlSearch = url.searchParams;
+    const val = urlSearch.get(name);
+    const normalizedVal = val === null ? '' : val;
+
     if (typeof nextVal === 'function') {
+      // if the state has mutated elsewhere on the page
+      if (normalizedVal && normalizedVal !== previousParameterValueRef.current) {
+        previousParameterValueRef.current = normalizedVal;
+      }
       normalizedNextVal = nextVal(previousParameterValueRef.current);
     } else {
       normalizedNextVal = nextVal;
     }
 
-    // if the passed value is different, set the url, then the state to cause minimal re-renders
-    const url = new URL(window.location.href);
-    const urlSearch = url.searchParams;
-    const val = urlSearch.get(name);
+    // update the url with the updated value
     if (normalizedNextVal !== val) {
       urlSearch.set(name, normalizedNextVal);
       // eslint-disable-next-line no-restricted-globals -- this is the intention of the library
