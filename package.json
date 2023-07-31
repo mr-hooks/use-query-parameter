@@ -14,7 +14,7 @@
     "test:unit": "jest",
     "test:lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "build": "rollup -c --bundleConfigAsCjs",
-    "watch:build": "nodemon --watch src -e ts,js --exec 'rollup -c --bundleConfigAsCjs'",
+    "watch:build": "nodemon --watch src -e ts,js --exec 'rollup -c --bundleConfigAsCjs'"
   },
   "keywords": [
     "react",
