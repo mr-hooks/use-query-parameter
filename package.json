@@ -1,6 +1,6 @@
 {
   "name": "@mr-hooks/use-query-parameter",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "A hook for managing state in query parameters, for link sharing in your React applications",
   "repository": "https://github.com/mr-hooks/use-query-parameter",
   "exports": {
